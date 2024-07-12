@@ -29,6 +29,7 @@ def handle(client):
             client.close()
             username=usernames[index]
             broadcast(f"{username} has disconnected")
+            print(f"{username} has disconnected")
             usernames.remove(username)
             break
 #receive messages and adding users
