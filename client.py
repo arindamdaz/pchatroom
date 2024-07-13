@@ -69,6 +69,7 @@ exit_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
                             activeforeground=blue4,activebackground=blue3,
                             image=exit_icon,command=stop)
 exit_button.place(x=900,y=500)
+root.protocol("WM_DELETE_WINDOW",stop)
 receive_thread = th.Thread(target=receive)
 receive_thread.start()
 root.mainloop()
