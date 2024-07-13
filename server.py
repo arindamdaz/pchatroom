@@ -43,7 +43,7 @@ def recieve():
         clients.append(client)
         print(f"{username} has connected")
         broadcast(f"{username} has joined the chat\n")
-        client.send("Connected to the server".encode(enc))
+        client.send("Connected to the server\n".encode(enc))
         handle_thread = th.Thread(target=handle,args=(client,))
         handle_thread.start()
 print("Server is listening........")
