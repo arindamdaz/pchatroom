@@ -28,15 +28,16 @@ def receive():
                 chat_display.yview('end')
                 chat_display.config(state='disabled')
         except:
-                print("Server disconnected")
+                print("Connection Closed")
                 client.close()
-                exit()
                 break
 def write():
     message = f"{username}: {input_area.get('1.0','end')}"
     client.send(message.encode(enc))
     input_area.delete("1.0",'end')
-
+def stop():
+    client.close()
+    root.destroy()
 root = tkinter.Tk()
 root.geometry("1000x700")
 root.title("pChatroom")
@@ -59,11 +60,15 @@ msg_label.place(x=20,y=550)
 input_area=tkinter.Text(root,bg=blue1,width=78,height=3,font=("Arial",14))
 input_area.place(x=20,y=600)
 send_icon=tkinter.PhotoImage(file="images\\send_resized.png")
-send_button=tkinter.Button(root,text="Send",fg=blue2,bg=blue4,width=60,height=62,
+send_button=tkinter.Button(root,text="Send",fg=blue2,bg=blue4,width=60,height=60,
                            font=("Arial",12),activeforeground=blue4,activebackground=blue3,
-                           image=send_icon,compound="top",
-                           command=write)
+                           image=send_icon,command=write)
 send_button.place(x=900,y=600)
+exit_icon=tkinter.PhotoImage(file="images\\exit_resized.png")
+exit_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
+                            activeforeground=blue4,activebackground=blue3,
+                            image=exit_icon,command=stop)
+exit_button.place(x=900,y=500)
 receive_thread = th.Thread(target=receive)
 receive_thread.start()
 root.mainloop()
