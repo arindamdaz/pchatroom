@@ -17,19 +17,19 @@ def join():
     try:
         client.connect((host,port))
     except:
-        connect.destroy()
-        sd = tkinter.Tk()
-        sd.geometry("400x200")
-        sd.resizable(False,False)
-        sd.config(background=blue2)
-        sd.title("Error")
-        appicon = tkinter.PhotoImage(file="images\\appicon.png")
-        sd.iconphoto(True,appicon)
-        disconnect_icon = tkinter.PhotoImage(file="images\\disconnected_resized.png")
-        disconnected=tkinter.Label(sd,text="Server refused to connect",fg=blue5,bg=blue2,font=("Arial",15),image=disconnect_icon,compound="left")
-        disconnected.place(x=80,y=80)
-        sd.protocol("WM_DELETE_WINDOW",exit)
-        sd.mainloop()
+         connect.destroy()
+         sd = tkinter.Tk()
+         sd.geometry("400x200")
+         sd.resizable(False,False)
+         sd.config(background=blue2)
+         sd.title("Error")
+         appicon = tkinter.PhotoImage(file="images\\appicon.png")
+         sd.iconphoto(True,appicon)
+         disconnect_icon = tkinter.PhotoImage(file="images\\disconnected_resized.png")
+         disconnected=tkinter.Label(sd,text="Server refused to connect",fg=blue5,bg=blue2,font=("Arial",15),image=disconnect_icon,compound="left")
+         disconnected.place(x=80,y=80)
+         sd.protocol("WM_DELETE_WINDOW",exit)
+         sd.mainloop()
     connect.destroy()
 connect = tkinter.Tk()
 connect.geometry("500x300")
@@ -75,14 +75,18 @@ def receive():
                 chat_display.insert('end',message)
                 chat_display.yview('end')
                 chat_display.config(state='disabled')
-        except:
-                chat_display.config(state="normal")
-                chat_display.insert('end',"Connection closed")
-                chat_display.yview('end')
-                chat_display.config(state='disabled')
-                client.close()
-                send_button.config(state="disabled")
-                break
+        except ConnectionResetError:
+            chat_display.config(state="normal")
+            chat_display.insert('end',"Connection closed")
+            chat_display.yview('end')
+            chat_display.config(state='disabled')
+            client.close()
+            send_button.config(state="disabled")
+            break
+        except ConnectionAbortedError:
+            print("Connection Closed")
+            client.close()
+            break
 def write():
     message = f"{username}: {input_area.get('1.0','end')}"
     client.send(message.encode(enc))
@@ -121,7 +125,7 @@ exit_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
                             activeforeground=blue4,activebackground=blue3,
                             image=exit_icon,command=stop)
 exit_button.place(x=900,y=500)
-root.protocol("WM_DELETE_WINDOW",exit)
+root.protocol("WM_DELETE_WINDOW",stop)
 receive_thread = th.Thread(target=receive)
 receive_thread.start()
 root.mainloop()
