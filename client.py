@@ -5,16 +5,64 @@ import threading as th
 import socket as sk
 
 enc='utf-8'
-host = '127.0.0.1'
+host = ""
 port = 50505
-username=input("Enter your username: ")
+username = ""
 client= sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-try:
-    client.connect((host,port))
-except ConnectionRefusedError:
-    print("Server is unreachable")
-    print("Exiting.....")
-    exit()
+
+def join():
+    global host,username 
+    host = server_entry.get()
+    username = uname_entry.get()
+    try:
+        client.connect((host,port))
+    except:
+        connect.destroy()
+        sd = tkinter.Tk()
+        sd.geometry("400x200")
+        sd.resizable(False,False)
+        sd.config(background=blue2)
+        sd.title("Error")
+        appicon = tkinter.PhotoImage(file="images\\appicon.png")
+        sd.iconphoto(True,appicon)
+        disconnect_icon = tkinter.PhotoImage(file="images\\disconnected_resized.png")
+        disconnected=tkinter.Label(sd,text="Server refused to connect",fg=blue5,bg=blue2,font=("Arial",15),image=disconnect_icon,compound="left")
+        disconnected.place(x=80,y=80)
+        sd.protocol("WM_DELETE_WINDOW",exit)
+        sd.mainloop()
+    connect.destroy()
+connect = tkinter.Tk()
+connect.geometry("500x300")
+connect.resizable(False, False)
+connect.title("Connect to chatroom")
+connect.config(background=blue2)
+appicon = tkinter.PhotoImage(file="images\\appicon.png")
+connect.iconphoto(True,appicon)
+server_entry = tkinter.Entry(connect,font=("Arial",15))
+server_entry.place(x=150,y=70)
+uname_entry = tkinter.Entry(connect,font=("Arial",15))
+uname_entry.place(x=150,y=130)
+connect_label=tkinter.Label(connect,text="Enter Server IP and Username",fg=blue5,bg=blue2,font=("Arial",15))
+connect_label.pack(padx=10,pady=10)
+server_icon=tkinter.PhotoImage(file="images\\server_resized.png")
+server_label=tkinter.Label(connect,bg=blue2,image=server_icon)
+server_label.place(x=90,y=60)
+user_icon=tkinter.PhotoImage(file="images\\user_resized.png")
+user_label=tkinter.Label(connect,bg=blue2,image=user_icon)
+user_label.place(x=90,y=120)
+connect_icon=tkinter.PhotoImage(file="images\\join_resized.png")
+connect_button=tkinter.Button(connect,fg=blue2,bg=blue4,width=50,height=50,
+                            activeforeground=blue4,activebackground=blue3,
+                            image=connect_icon,compound="top",
+                            command=join)
+connect_button.place(x=150,y=200)
+exit_icon=tkinter.PhotoImage(file="images\\exit_resized.png")
+exit_button=tkinter.Button(connect,fg=blue2,bg=blue4,width=50,height=50,
+                            activeforeground=blue4,activebackground=blue3,
+                            image=exit_icon,compound="top",
+                            command=exit)
+exit_button.place(x=300,y=200)
+connect.mainloop()
 
 def receive():
     while True:
@@ -28,8 +76,12 @@ def receive():
                 chat_display.yview('end')
                 chat_display.config(state='disabled')
         except:
-                print("Connection Closed")
+                chat_display.config(state="normal")
+                chat_display.insert('end',"Connection closed")
+                chat_display.yview('end')
+                chat_display.config(state='disabled')
                 client.close()
+                send_button.config(state="disabled")
                 break
 def write():
     message = f"{username}: {input_area.get('1.0','end')}"
@@ -69,7 +121,7 @@ exit_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
                             activeforeground=blue4,activebackground=blue3,
                             image=exit_icon,command=stop)
 exit_button.place(x=900,y=500)
-root.protocol("WM_DELETE_WINDOW",stop)
+root.protocol("WM_DELETE_WINDOW",exit)
 receive_thread = th.Thread(target=receive)
 receive_thread.start()
 root.mainloop()
