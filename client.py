@@ -1,8 +1,13 @@
 import tkinter
 import tkinter.scrolledtext
-from blues import *
 import threading as th
 import socket as sk
+
+blue1='#CAF0F8'
+blue2='#90E0EF'
+blue3='#00B4D8'
+blue4='#0077B6'
+blue5='#03045E'
 
 enc='utf-8'
 host = ""
@@ -62,6 +67,7 @@ exit_button=tkinter.Button(connect,fg=blue2,bg=blue4,width=50,height=50,
                             image=exit_icon,compound="top",
                             command=exit)
 exit_button.place(x=300,y=200)
+connect.protocol("WM_DELETE_WINDOW",exit)
 connect.mainloop()
 
 def receive():
