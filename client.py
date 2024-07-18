@@ -76,6 +76,9 @@ def receive():
             message=client.recv(1024).decode(enc)
             if message=="UNAME":
                 client.send(username.encode(enc))
+            elif message=="ADMIN":
+                kick_button.config(state="normal")
+                ban_button.config(state="normal")
             else:
                 chat_display.config(state="normal")
                 chat_display.insert('end',message)
@@ -88,6 +91,8 @@ def receive():
             chat_display.config(state='disabled')
             client.close()
             send_button.config(state="disabled")
+            kick_button.config(state="disabled")
+            ban_button.config(state="disabled")
             break
         except ConnectionAbortedError:
             print("Connection Closed")
@@ -100,6 +105,10 @@ def write():
 def stop():
     client.close()
     root.destroy()
+def ban():
+    pass
+def kick():
+    pass
 root = tkinter.Tk()
 root.geometry("1000x700")
 root.title("pChatroom")
@@ -130,7 +139,17 @@ exit_icon=tkinter.PhotoImage(file="images\\exit_resized.png")
 exit_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
                             activeforeground=blue4,activebackground=blue3,
                             image=exit_icon,command=stop)
-exit_button.place(x=900,y=500)
+exit_button.place(x=900,y=300)
+ban_icon=tkinter.PhotoImage(file="images\\ban_resized.png")
+ban_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
+                            activeforeground=blue4,activebackground=blue3,
+                            image=ban_icon,command=ban,state="disabled")
+ban_button.place(x=800,y=300)
+kick_icon=tkinter.PhotoImage(file="images\\kick_resized.png")
+kick_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
+                            activeforeground=blue4,activebackground=blue3,
+                            image=kick_icon,command=kick,state="disabled")
+kick_button.place(x=700,y=300)
 root.protocol("WM_DELETE_WINDOW",stop)
 receive_thread = th.Thread(target=receive)
 receive_thread.start()
