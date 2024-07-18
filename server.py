@@ -26,6 +26,7 @@ def kick(user):
             clients.remove(client)
             client.close()
             broadcast(f"{user} has been kicked out by admin\n")
+            print(f"{user} has been kicked out by admin")
             usernames.remove(user)
 # for broadcasting messages to all users
 def broadcast(message):
@@ -37,7 +38,8 @@ def handle(client):
         try:
             message=client.recv(1024).decode(enc)
             if message[0:6]=="//kick":
-                kick(message[6:])
+                user=message[6:]
+                kick(user)
             else:
                 broadcast(message)
         except ConnectionResetError:
@@ -54,7 +56,6 @@ def handle(client):
                 #broadcast(f"{username[0]} is admin now\n")    
             break
         except ConnectionAbortedError:
-            print(f"{message[6:]} has been kicked out by admin")
             break
 #receive messages and adding users
 def recieve():
