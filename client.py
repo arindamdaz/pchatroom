@@ -79,6 +79,8 @@ def receive():
             elif message=="ADMIN":
                 kick_button.config(state="normal")
                 ban_button.config(state="normal")
+                command_area.config(state="normal")
+                command_label.place(x=700,y=220)
             else:
                 chat_display.config(state="normal")
                 chat_display.insert('end',message)
@@ -93,6 +95,7 @@ def receive():
             send_button.config(state="disabled")
             kick_button.config(state="disabled")
             ban_button.config(state="disabled")
+            command_area.config(state="disabled")
             break
         except ConnectionAbortedError:
             print("Connection Closed")
@@ -108,7 +111,9 @@ def stop():
 def ban():
     pass
 def kick():
-    pass
+    command = f"//kick{command_area.get('1.0','end-1c')}"
+    client.send(command.encode(enc))
+    command_area.delete("1.0",'end')
 root = tkinter.Tk()
 root.geometry("1000x700")
 root.title("pChatroom")
@@ -150,6 +155,9 @@ kick_button=tkinter.Button(root,fg=blue2,bg=blue4,width=50,height=50,
                             activeforeground=blue4,activebackground=blue3,
                             image=kick_icon,command=kick,state="disabled")
 kick_button.place(x=700,y=300)
+command_label=tkinter.Label(root,text="Enter username to ban or kick:",fg=blue5,bg=blue2,font=("Arial",12))
+command_area=tkinter.Text(root,bg=blue1,width=28,height=1,font=("Arial",12),state="disabled")
+command_area.place(x=700,y=250)
 root.protocol("WM_DELETE_WINDOW",stop)
 receive_thread = th.Thread(target=receive)
 receive_thread.start()

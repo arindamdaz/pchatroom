@@ -13,6 +13,20 @@ except OSError:
 server.listen()
 clients=[]
 usernames=[]
+def kick(user):
+    if user == usernames[0]:
+        clients[0].send("You are the admin\n".encode(enc))
+    else:
+        if user not in usernames:
+            clients[0].send(f"{user} not found in chatroom\n".encode(enc))
+        else:
+            index=usernames.index(user)
+            client=clients[index]
+            client.send(f"You have been kicked out by admin\n".encode(enc))
+            clients.remove(client)
+            client.close()
+            broadcast(f"{user} has been kicked out by admin\n")
+            usernames.remove(user)
 # for broadcasting messages to all users
 def broadcast(message):
     for client in clients:
@@ -22,7 +36,10 @@ def handle(client):
     while True:
         try:
             message=client.recv(1024).decode(enc)
-            broadcast(message)
+            if message[0:6]=="//kick":
+                kick(message[6:])
+            else:
+                broadcast(message)
         except ConnectionResetError:
             index=clients.index(client)
             clients.remove(client)
@@ -35,7 +52,10 @@ def handle(client):
                 clients[0].send("ADMIN".encode(enc))
                 print(f"{usernames[0]} is admin now")
                 #broadcast(f"{username[0]} is admin now\n")    
-            break    
+            break
+        except ConnectionAbortedError:
+            print(f"{message[6:]} has been kicked out by admin")
+            break
 #receive messages and adding users
 def recieve():
     while True:
