@@ -81,6 +81,17 @@ def receive():
                 ban_button.config(state="normal")
                 command_area.config(state="normal")
                 command_label.place(x=700,y=220)
+            elif message=="BAN":
+                chat_display.config(state="normal")
+                chat_display.insert('end',"You have been banned by admin")
+                chat_display.yview('end')
+                chat_display.config(state='disabled')
+                client.close()
+                send_button.config(state="disabled")
+                kick_button.config(state="disabled")
+                ban_button.config(state="disabled")
+                command_area.config(state="disabled")
+                break   
             else:
                 chat_display.config(state="normal")
                 chat_display.insert('end',message)
@@ -109,7 +120,9 @@ def stop():
     client.close()
     root.destroy()
 def ban():
-    pass
+    command = f"//ban{command_area.get('1.0','end-1c')}"
+    client.send(command.encode(enc))
+    command_area.delete("1.0",'end')
 def kick():
     command = f"//kick{command_area.get('1.0','end-1c')}"
     client.send(command.encode(enc))
